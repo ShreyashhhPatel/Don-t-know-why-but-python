@@ -1,0 +1,41 @@
+print("Hello world!")
+def f(a, b=0, *args,c=1, **kwargs):
+    return a + b + c + sum(args) + kwargs.get("bonus", 0)
+print(f(1))
+print(f(1, 2))
+print(f(2, 3, 4, 5, c=10))
+print(f(1, bonus=7)) 
+
+def area_rect(w: float, h: float) -> float:
+    return w * h
+print(area_rect(3, 4))
+def area_square(a: float) -> float:
+    return area_rect(a, a)  
+print(area_square(5))
+
+def only_positional(a, /, b): 
+    ...
+only_positional(1, 2)
+# The / marks everything before it (a) as positional-only.
+
+# You cannot call the function with a= explicitly.
+only_positional(10, 20)    # ✅ OK
+only_positional(10, b=20)  # ✅ OK
+# only_positional(a=10, b=20)  # ❌ Error: a is positional-only
+
+def only_keyword(*, k1, k2=0): 
+    ...
+only_keyword(k1=1)
+# The * means everything after it must be passed by keyword.
+# The * marks everything after it (k1, k2) as keyword-only.
+
+def mean(*values: float) -> float:
+    lumsum = []
+    for v in values:
+        if isinstance(v, (int, float)):
+            lumsum.append(v)
+    if not lumsum:  
+        raise ValueError("No numeric values provided")
+    return sum(lumsum) / len(lumsum)
+
+print(mean(1, 2, 3, 4, "x"))   
