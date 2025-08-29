@@ -95,3 +95,94 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+import time
+from functools import wraps
+
+def retry(times=3, exceptions=(Exception,), delay=0):
+    """Retry decorator.
+
+    Args:
+        times (int): Number of attempts.
+        exceptions (tuple): Exceptions to catch.
+        delay (int|float): Seconds to wait between retries.
+    """
+    def deco(fn):
+        @wraps(fn)
+        def w(*a, **k):
+            last = None
+            for i in range(1, times + 1):
+                try:
+                    return fn(*a, **k)
+                except exceptions as e:
+                    last = e
+                    if i < times and delay > 0:
+                        time.sleep(delay)
+            raise last
+        return w
+    return deco
+
+@retry(times=5, exceptions=(ValueError,), delay=1)
+def test():
+    print("Trying...")
+    if time.time() % 2 < 1:
+        raise ValueError("Failed!")
+    return "Success!"
+
+print(test())
+
+
+# # Write @once so the function runs only on first call; later calls return the first result.
+# Write @debug to log arguments and result of a function.
+# Expected: prints like add(2,3) -> 5.
+
+# def once(func):
+#     @wraps(func)
+#     def wrapper(*args, **kwargs):
+#         print('doing something')
+#         # wrapper.has_run = False
+#         if not wrapper.has_run:
+#             wrapper.value = func(*args, **kwargs)
+#             wrapper.has_run = True
+#         return wrapper.value
+#     wrapper.has_run = False
+#     wrapper.value = None
+#     return wrapper  
+
+def once(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.value = func(*args, **kwargs)
+            wrapper.has_run = True
+        return wrapper.value
+    wrapper.has_run = False
+    wrapper.value = None
+    return wrapper
+
+def debug(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        print(f"{func.__name__}{args, kwargs} -> {result}")
+        return result
+    return wrapper
+
+@once
+def init_value():
+    print("Running init_value...")
+    return 42
+
+@debug
+def add(a, b):
+    return a + b
+
+
+# Test @once
+print(init_value())  # runs: prints "Running init_value...", returns 42
+print(init_value())  # returns cached 42 without printing again
+
+# Test @debug
+add(2, 3)  # prints: add((2, 3), {}) -> 5
+add(10, 20)  # prints: add((10, 20), {}) -> 30
