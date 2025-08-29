@@ -165,7 +165,7 @@ def debug(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
-        print(f"{func.__name__}{args, kwargs} -> {result}")
+        print(f"{func.__name__}{args} -> {result}")
         return result
     return wrapper
 
@@ -186,3 +186,17 @@ print(init_value())  # returns cached 42 without printing again
 # Test @debug
 add(2, 3)  # prints: add((2, 3), {}) -> 5
 add(10, 20)  # prints: add((10, 20), {}) -> 30
+
+# Example function that takes user input once
+@once
+def get_number():
+    num = int(input("Enter a number: "))
+    return num
+
+# The first time you call it, it will ask for input
+first_result = get_number()
+print("First result:", first_result)
+
+# The second time and onward, it will just return the same number without asking again
+second_result = get_number()
+print("Second result:", second_result)
