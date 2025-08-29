@@ -22,3 +22,14 @@ def make_counter(start=0):
 
 c1 = make_counter(40)
 print(c1(), c1(), c1())
+
+def count(start = 0):
+    count = start
+
+    def start_count():
+        nonlocal  count
+        count += 1
+        return start_count
+    return count
+cz = count(3)
+print(cz)
