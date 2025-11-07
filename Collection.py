@@ -21,6 +21,8 @@ for word in words:
 length_count = {k:(cnt:= sum(1 for w in words if len(w)==k)) for k in set(map(len, words))}
 print(length_count)
 
+print("Hello world")
+
 # words = [ "a","bb","bb","ccc","ccc","dddddd"]
 # lenght_counter = {}
 # map = map(len, words)
