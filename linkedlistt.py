@@ -54,5 +54,4 @@ if __name__ == "__main__":
     ll.append(30)
     ll.prepend(5)
     ll.delete_last_element()
-
     ll.display()
